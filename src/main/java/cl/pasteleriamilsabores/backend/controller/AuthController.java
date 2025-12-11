@@ -2,6 +2,7 @@ package cl.pasteleriamilsabores.backend.controller;
 
 import cl.pasteleriamilsabores.backend.dto.LoginRequest;
 import cl.pasteleriamilsabores.backend.dto.LoginResponse;
+import cl.pasteleriamilsabores.backend.dto.RegisterRequest;
 import cl.pasteleriamilsabores.backend.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,8 @@ public class AuthController {
 
     // POST /api/auth/register
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody LoginRequest request) {
+    // CAMBIO: Ahora recibimos RegisterRequest en vez de LoginRequest
+    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
         try {
             LoginResponse response = authService.registrar(request);
             return ResponseEntity.ok(response);

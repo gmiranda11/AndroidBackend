@@ -23,31 +23,51 @@ public class AuthService {
             throw new RuntimeException("Contraseña incorrecta");
         }
 
-        return new LoginResponse(usuario.getId(), usuario.getNombre(), usuario.getEmail(), "token_dummy_123");
+        // CAMBIO: Ahora enviamos todos los datos de vuelta
+        return new LoginResponse(
+                usuario.getId(),
+                usuario.getNombre(),
+                usuario.getEmail(),
+                "token_dummy_123",
+                usuario.getFechaNacimiento(), // Dato real
+                usuario.getTelefono(),        // Dato real
+                usuario.isEsEstudianteDuoc(), // Dato real
+                usuario.isRecibirNewsletter() // Dato real
+        );
     }
 
-    public LoginResponse registrar(LoginRequest request) {
+    // En AuthService.java
+    // CAMBIO: El parámetro ahora es RegisterRequest
+    public LoginResponse registrar(RegisterRequest request) {
         if (usuarioRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("El email ya está registrado");
         }
 
         String nuevoId = UUID.randomUUID().toString();
 
-        // Creamos el usuario con datos por defecto para los campos que no vienen en el LoginRequest básico
-        // (O si quieres enviarlos desde Android, tendrías que actualizar el LoginRequest también)
+        // AHORA SÍ: Usamos los datos reales que vienen del objeto 'request'
         Usuario nuevoUsuario = new Usuario(
                 nuevoId,
-                "Nuevo Usuario",
+                request.getNombre(),          // Nombre real
                 request.getEmail(),
                 request.getPassword(),
-                "", // fecha nacimiento vacía por defecto
-                "", // teléfono vacío
-                false, // no estudiante
-                true   // newsletter sí
+                request.getFechaNacimiento(), // Fecha real
+                request.getTelefono(),        // Teléfono real
+                request.isEsEstudianteDuoc(), // Boolean real
+                request.isRecibirNewsletter() // Boolean real
         );
 
         usuarioRepository.save(nuevoUsuario);
 
-        return new LoginResponse(nuevoId, nuevoUsuario.getNombre(), nuevoUsuario.getEmail(), "token_nuevo_456");
+        return new LoginResponse(
+                nuevoId,
+                nuevoUsuario.getNombre(),
+                nuevoUsuario.getEmail(),
+                "token_nuevo_456",
+                nuevoUsuario.getFechaNacimiento(),
+                nuevoUsuario.getTelefono(),
+                nuevoUsuario.isEsEstudianteDuoc(),
+                nuevoUsuario.isRecibirNewsletter()
+        );
     }
 }
